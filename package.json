@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "async-mutex": "^0.4.0",
+    "chia-datalayer": "^2.0.9",
+    "superagent": "^8.1.2"
+  }
+}
