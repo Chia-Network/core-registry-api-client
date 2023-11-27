@@ -1,0 +1,66 @@
+# Compares the version in package.json to tags on the repo. If the tag doesn't exist, a new tag is created, which
+# then triggers the normal "on tag" release automation in the build job
+name: Tag, Release, and Publish to NPM
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: main-release-check
+
+jobs:
+  tag-release-publish:
+    name: Changelog, Tag, Release, and Publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean workspace
+        uses: Chia-Network/actions/clean-workspace@main
+
+      - name: Checkout current branch
+        uses: actions/checkout@v3
+        with:
+          # Need PACKAGE_ADMIN_PAT token so when the tag is created, the tag automation runs
+          token: ${{ secrets.PACKAGE_ADMIN_PAT }}
+          fetch-depth: 0
+
+      - name: Setup Node 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Configure commit signing for ChiaAutomation
+        uses: Chia-Network/actions/commit-sign/gpg@main
+        with:
+          gpg_private_key: ${{ secrets.CHIA_AUTOMATION_PRIVATE_GPG_KEY }}
+          passphrase: ${{ secrets.CHIA_AUTOMATION_PRIVATE_GPG_PASSPHRASE }}
+
+      - name: Create tag, create release, publish to npm
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          version=$(cat $GITHUB_WORKSPACE/package.json | jq -r '.version')
+          echo "Version is: $version"
+
+          if [ $(git tag -l "$version") ]; then
+            echo "Tag exists, nothing to do"
+          else
+            echo "Tag does not exist. Creating and pushing tag"
+            rm -f CHANGELOG.md
+            npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0
+            changes=$(npx conventional-changelog-cli -r 1 | tail -n +2)
+            git add CHANGELOG.md
+            git commit -m "chore: Updating changelog for $version"
+            git tag $version -m "$version  $changes"
+            git push origin $version
+            git push origin main
+            gh release create $version --verify-tag --title "" --notes "$version  $changes"
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+            npm publish --access public
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: rm .npmrc || true
