@@ -1,6 +1,6 @@
 {
   "name": "@chia-carbon/core-registry-api-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Core Registry API Helper",
   "main": "index.js",
   "scripts": {
@@ -19,13 +19,13 @@
     "type": "git",
     "url": "https://github.com/Chia-Network/core-registry-api-client.git"
   },
-  "bugs":{
+  "bugs": {
     "url": "https://github.com/Chia-Network/core-registry-api-client/issues"
   },
   "dependencies": {
     "async-mutex": "^0.4.0",
-    "chia-datalayer": "^2.0.9",
-    "superagent": "^8.1.2"
+    "chia-datalayer": "^2.0.20",
+    "superagent": "^10.2.2"
   },
   "contributors": [
     "Michael.Taylor <mtaylor@michaeltaylor3d.com>",
