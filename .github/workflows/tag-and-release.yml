@@ -10,6 +10,11 @@ on:
 concurrency:
   group: main-release-check
 
+permissions:
+  contents: read
+  actions: write
+  id-token: write
+
 jobs:
   tag-release-publish:
     name: Changelog, Tag, Release, and Publish
@@ -39,7 +44,6 @@ jobs:
       - name: Create tag, create release, publish to npm
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           version=$(cat $GITHUB_WORKSPACE/package.json | jq -r '.version')
           echo "Version is: $version"
@@ -57,7 +61,7 @@ jobs:
             git push origin $version
             git push origin main
             gh release create $version --verify-tag --title "" --notes "$version  $changes"
-            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+            npm config set provenance true
             npm publish --access public
           fi
 
