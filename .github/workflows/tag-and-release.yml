@@ -35,6 +35,11 @@ jobs:
         with:
           node-version: "18"
 
+      - name: Ensure we have a new enough npm version for trusted publishing
+        run: |
+          npm install -g npm
+          npm --version
+
       - name: Configure commit signing for ChiaAutomation
         uses: Chia-Network/actions/commit-sign/gpg@main
         with:
