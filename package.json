@@ -23,7 +23,7 @@
     "url": "https://github.com/Chia-Network/core-registry-api-client/issues"
   },
   "dependencies": {
-    "async-mutex": "^0.4.0",
+    "async-mutex": "^0.5.0",
     "chia-datalayer": "^2.0.20",
     "superagent": "^10.2.2"
   },
