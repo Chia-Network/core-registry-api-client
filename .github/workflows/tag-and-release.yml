@@ -30,10 +30,10 @@ jobs:
           token: ${{ secrets.PACKAGE_ADMIN_PAT }}
           fetch-depth: 0
 
-      - name: Setup Node 18.x
-        uses: actions/setup-node@v3
+      - name: Setup Node 24.x
+        uses: actions/setup-node@v6
         with:
-          node-version: "18"
+          node-version: "24"
 
       - name: Ensure we have a new enough npm version for trusted publishing
         run: |

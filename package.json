@@ -31,5 +31,8 @@
     "Michael.Taylor <mtaylor@michaeltaylor3d.com>",
     "Chris Marslender <chrismarslender@gmail.com>",
     "Zach Brown <zachary.g.brown@gmail.com>"
-  ]
+  ],
+  "engines": {
+    "node": ">=24.14.1"
+  }
 }
